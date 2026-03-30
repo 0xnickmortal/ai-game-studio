@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" width="52" height="52">
+  <!-- Shadow -->
+  <ellipse cx="26" cy="49" rx="18" ry="4" fill="rgba(0,0,0,0.3)"/>
+
+  <!-- Armored body -->
+  <polygon points="26,4 44,14 48,26 44,40 26,48 8,40 4,26 8,14"
+           fill="#4a3060" stroke="#2a1840" stroke-width="1"/>
+
+  <!-- Armor plates -->
+  <line x1="12" y1="18" x2="40" y2="18" stroke="#5a3870" stroke-width="2"/>
+  <line x1="10" y1="26" x2="42" y2="26" stroke="#5a3870" stroke-width="2"/>
+  <line x1="12" y1="34" x2="40" y2="34" stroke="#5a3870" stroke-width="2"/>
+  <!-- Vertical rivets -->
+  <line x1="20" y1="10" x2="20" y2="42" stroke="#3a2050" stroke-width="1.5"/>
+  <line x1="32" y1="10" x2="32" y2="42" stroke="#3a2050" stroke-width="1.5"/>
+
+  <!-- Visor slit -->
+  <rect x="14" y="20" width="24" height="6" rx="2" fill="#0a0515"/>
+
+  <!-- Glowing eyes in visor -->
+  <circle cx="21" cy="23" r="2.5" fill="#ff4422"/>
+  <circle cx="31" cy="23" r="2.5" fill="#ff4422"/>
+  <!-- Eye glow -->
+  <circle cx="21" cy="23" r="4" fill="rgba(255,68,34,0.2)"/>
+  <circle cx="31" cy="23" r="4" fill="rgba(255,68,34,0.2)"/>
+
+  <!-- Shoulder spikes -->
+  <polygon points="4,18 0,14 8,14" fill="#3a2050"/>
+  <polygon points="48,18 52,14 44,14" fill="#3a2050"/>
+</svg>

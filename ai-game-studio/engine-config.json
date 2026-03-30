@@ -1,0 +1,22 @@
+{
+  "engine": "godot",
+  "language": "GDScript",
+  "rendering": "Forward+",
+  "physics": "Jolt Physics (默认)",
+  "namingConventions": {
+    "classes": "PascalCase",
+    "variables": "snake_case",
+    "signals": "snake_case (past tense: health_changed)",
+    "files": "snake_case.gd",
+    "scenes": "snake_case.tscn",
+    "constants": "SCREAMING_SNAKE_CASE"
+  },
+  "performanceBudgets": {
+    "targetFps": 60,
+    "frameBudgetMs": 16.67,
+    "maxDrawCalls": 2000,
+    "memoryCeilingMb": 2048
+  },
+  "engineVersion": "4.5",
+  "godotBinaryPath": "D:\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64.exe"
+}

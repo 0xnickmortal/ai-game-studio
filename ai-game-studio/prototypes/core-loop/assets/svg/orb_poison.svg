@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28">
+  <defs>
+    <radialGradient id="pg" cx="40%" cy="40%"><stop offset="0%" stop-color="#cc88ee"/><stop offset="100%" stop-color="#6622aa"/></radialGradient>
+  </defs>
+  <circle cx="14" cy="14" r="13" fill="rgba(140,40,200,0.15)"/>
+  <circle cx="14" cy="14" r="10" fill="url(#pg)"/>
+  <circle cx="11" cy="11" r="4" fill="rgba(255,200,255,0.25)"/>
+  <!-- Skull icon -->
+  <circle cx="14" cy="12" r="5" fill="rgba(220,200,240,0.5)"/>
+  <circle cx="12" cy="11" r="1.5" fill="rgba(60,20,80,0.7)"/>
+  <circle cx="16" cy="11" r="1.5" fill="rgba(60,20,80,0.7)"/>
+  <rect x="12.5" y="17" width="1" height="3" fill="rgba(220,200,240,0.4)"/>
+  <rect x="14.5" y="17" width="1" height="3" fill="rgba(220,200,240,0.4)"/>
+</svg>

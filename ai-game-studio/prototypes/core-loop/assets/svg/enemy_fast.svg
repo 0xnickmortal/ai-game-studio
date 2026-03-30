@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <!-- Shadow -->
+  <ellipse cx="20" cy="37" rx="8" ry="2.5" fill="rgba(0,0,0,0.2)"/>
+
+  <!-- Spiky body -->
+  <polygon points="20,2 24,10 34,8 28,16 38,20 28,24 34,32 24,30 20,38 16,30 6,32 12,24 2,20 12,16 6,8 16,10"
+           fill="#c44020" stroke="#8a2010" stroke-width="0.5"/>
+  <!-- Inner glow -->
+  <circle cx="20" cy="20" r="8" fill="rgba(255,200,150,0.2)"/>
+
+  <!-- Eyes -->
+  <circle cx="17" cy="18" r="3" fill="white"/>
+  <circle cx="23" cy="18" r="3" fill="white"/>
+  <circle cx="17.5" cy="18.5" r="1.5" fill="#100008"/>
+  <circle cx="23.5" cy="18.5" r="1.5" fill="#100008"/>
+
+  <!-- Speed lines -->
+  <line x1="0" y1="17" x2="6" y2="17" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <line x1="0" y1="23" x2="4" y2="23" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+</svg>

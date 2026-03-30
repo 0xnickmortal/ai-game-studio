@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Ground glow -->
+  <ellipse cx="32" cy="58" rx="28" ry="8" fill="rgba(255,150,50,0.06)"/>
+
+  <!-- Fire underneath -->
+  <ellipse cx="26" cy="54" rx="3" ry="5" fill="rgba(255,120,20,0.6)"/>
+  <ellipse cx="32" cy="52" rx="4" ry="7" fill="rgba(255,160,40,0.5)"/>
+  <ellipse cx="38" cy="54" rx="3" ry="5" fill="rgba(255,100,10,0.6)"/>
+  <!-- Fire cores -->
+  <ellipse cx="32" cy="53" rx="2" ry="4" fill="rgba(255,220,100,0.6)"/>
+
+  <!-- Legs -->
+  <line x1="16" y1="46" x2="10" y2="56" stroke="#2a2430" stroke-width="3" stroke-linecap="round"/>
+  <line x1="48" y1="46" x2="54" y2="56" stroke="#2a2430" stroke-width="3" stroke-linecap="round"/>
+  <line x1="32" y1="48" x2="32" y2="56" stroke="#2a2430" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Cauldron body -->
+  <path d="M10,28 Q8,38 12,46 Q18,50 32,50 Q46,50 52,46 Q56,38 54,28"
+        fill="#2c2634" stroke="#1a1620" stroke-width="1"/>
+  <!-- Body highlight -->
+  <path d="M14,30 Q12,38 16,44" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+
+  <!-- Handles -->
+  <path d="M10,30 Q4,26 6,20" fill="none" stroke="#3a3440" stroke-width="3" stroke-linecap="round"/>
+  <path d="M54,30 Q60,26 58,20" fill="none" stroke="#3a3440" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Rim -->
+  <ellipse cx="32" cy="28" rx="24" ry="6" fill="#3a3440"/>
+  <ellipse cx="32" cy="28" rx="22" ry="5" fill="#1a1620"/>
+
+  <!-- Liquid surface -->
+  <ellipse cx="32" cy="28" rx="20" ry="4" fill="#30a030"/>
+  <ellipse cx="28" cy="27" rx="8" ry="2" fill="rgba(100,220,100,0.4)"/>
+
+  <!-- Bubbles -->
+  <circle cx="24" cy="26" r="2" fill="rgba(100,255,100,0.4)" stroke="rgba(150,255,150,0.3)" stroke-width="0.5"/>
+  <circle cx="36" cy="27" r="1.5" fill="rgba(100,255,100,0.3)"/>
+  <circle cx="30" cy="25" r="1" fill="rgba(150,255,150,0.4)"/>
+
+  <!-- Steam -->
+  <ellipse cx="26" cy="18" rx="4" ry="3" fill="rgba(200,200,210,0.12)"/>
+  <ellipse cx="36" cy="14" rx="3" ry="2.5" fill="rgba(200,200,210,0.08)"/>
+  <ellipse cx="30" cy="10" rx="5" ry="3" fill="rgba(200,200,210,0.06)"/>
+</svg>
