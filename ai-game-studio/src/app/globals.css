@@ -1,37 +1,235 @@
 @import '@xterm/xterm/css/xterm.css';
+@import url('https://rsms.me/inter/inter.css');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Reset for Ant Design dark theme */
+/* ============================================
+   Runway Design System Tokens
+   Source: npx getdesign@latest add runwayml
+   Font: Inter as substitute for abcNormal
+   ============================================ */
+:root {
+  /* Backgrounds — true blacks, cinematic */
+  --r-bg-black: #000000;
+  --r-bg-deep: #030303;
+  --r-bg-surface: #1a1a1a;
+  --r-bg-white: #ffffff;
+  --r-bg-cloud: #e9ecf2;
+
+  /* Text — cool-toned grays */
+  --r-text-white: #ffffff;
+  --r-text-primary: #f7f8f8;
+  --r-text-charcoal: #404040;
+  --r-text-slate: #767d88;
+  --r-text-mid: #7d848e;
+  --r-text-muted: #a7a7a7;
+  --r-text-footer: #999999;
+
+  /* Borders — barely visible */
+  --r-border-dark: #27272a;
+  --r-border-light: #c9ccd1;
+  --r-border-silver: #d0d4d4;
+
+  /* Brand accent — kept minimal (Runway is colorless, we keep a subtle accent for interactive) */
+  --r-accent: #5e6ad2;
+  --r-accent-hover: #7170ff;
+  --r-green: #27a644;
+  --r-red: #e74c3c;
+
+  /* Radius — small, not pill-shaped */
+  --r-radius-sm: 4px;
+  --r-radius-md: 6px;
+  --r-radius-lg: 8px;
+  --r-radius-xl: 16px;
+
+  /* Typography */
+  --r-font: "Inter", "Inter Variable", -apple-system, BlinkMacSystemFont,
+    "SF Pro Display", system-ui, "Segoe UI", Roboto, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --r-font-mono: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Code", monospace;
+}
+
+/* ============================================
+   Base — cinematic dark
+   ============================================ */
 body {
   margin: 0;
   padding: 0;
-  background: #0f172a;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--r-bg-black);
+  color: var(--r-text-primary);
+  font-family: var(--r-font);
+  font-feature-settings: "cv01", "ss03";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.16px;
+  line-height: 1.4;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+code, pre, kbd, samp {
+  font-family: var(--r-font-mono);
+  font-feature-settings: normal;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/* ============================================
+   Scrollbar — invisible-ish
+   ============================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
+
+/* ============================================
+   Ant Design Overrides — Runway-ize
+   Zero shadows, minimal borders, near-invisible UI
+   ============================================ */
+
+.ant-card {
+  background: var(--r-bg-deep) !important;
+  border: 1px solid var(--r-border-dark) !important;
+  border-radius: var(--r-radius-lg) !important;
+  box-shadow: none !important;
+}
+.ant-card-head {
+  border-bottom: 1px solid var(--r-border-dark) !important;
+  min-height: 42px !important;
+  padding: 0 16px !important;
+  background: transparent !important;
+}
+.ant-card-head-title {
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  letter-spacing: -0.16px !important;
+  color: var(--r-text-primary) !important;
+}
+.ant-card-body { color: var(--r-text-slate); }
+
+/* Buttons — restrained, near-invisible */
+.ant-btn {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  border-radius: var(--r-radius-sm) !important;
+  letter-spacing: -0.16px !important;
+  box-shadow: none !important;
+}
+.ant-btn-default {
+  background: transparent !important;
+  border: 1px solid var(--r-border-dark) !important;
+  color: var(--r-text-primary) !important;
+}
+.ant-btn-default:hover:not(:disabled) {
+  background: rgba(255,255,255,0.04) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: var(--r-text-white) !important;
+}
+.ant-btn-primary {
+  background: var(--r-accent) !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+.ant-btn-primary:hover:not(:disabled) {
+  background: var(--r-accent-hover) !important;
+}
+.ant-btn-text {
+  color: var(--r-text-slate) !important;
+}
+.ant-btn-text:hover:not(:disabled) {
+  background: rgba(255,255,255,0.04) !important;
+  color: var(--r-text-white) !important;
+}
+.ant-btn-dangerous {
+  color: var(--r-red) !important;
+  border-color: rgba(231,76,60,0.3) !important;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 3px;
+/* Inputs */
+.ant-input, .ant-input-affix-wrapper {
+  background: transparent !important;
+  border: 1px solid var(--r-border-dark) !important;
+  border-radius: var(--r-radius-md) !important;
+  color: var(--r-text-primary) !important;
+  font-family: var(--r-font) !important;
+}
+.ant-input::placeholder { color: var(--r-text-muted) !important; }
+.ant-input:hover, .ant-input-affix-wrapper:hover { border-color: rgba(255,255,255,0.12) !important; }
+.ant-input:focus, .ant-input-affix-wrapper-focused {
+  border-color: var(--r-accent) !important;
+  box-shadow: none !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+/* Tags — minimal, uppercase labels */
+.ant-tag {
+  background: transparent !important;
+  border: 1px solid var(--r-border-dark) !important;
+  border-radius: var(--r-radius-sm) !important;
+  color: var(--r-text-slate) !important;
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.35px !important;
+  padding: 1px 8px !important;
+  line-height: 1.5 !important;
+}
+
+/* Typography */
+.ant-typography { color: var(--r-text-primary); }
+h1.ant-typography, .ant-typography h1 { font-weight: 400 !important; letter-spacing: -1.2px !important; line-height: 1.0 !important; }
+h2.ant-typography, .ant-typography h2 { font-weight: 400 !important; letter-spacing: -0.9px !important; line-height: 1.0 !important; }
+h3.ant-typography, .ant-typography h3 { font-weight: 400 !important; letter-spacing: -0.16px !important; }
+
+/* Menu (sidebar) */
+.ant-menu-dark { background: transparent !important; }
+.ant-menu-dark .ant-menu-item {
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  letter-spacing: -0.16px !important;
+  border-radius: var(--r-radius-sm) !important;
+  margin: 1px 8px !important;
+  width: calc(100% - 16px) !important;
+  color: var(--r-text-slate) !important;
+}
+.ant-menu-dark .ant-menu-item:hover {
+  background: rgba(255,255,255,0.04) !important;
+  color: var(--r-text-white) !important;
+}
+.ant-menu-dark .ant-menu-item-selected {
+  background: rgba(255,255,255,0.06) !important;
+  color: var(--r-text-white) !important;
+}
+.ant-menu-dark .ant-menu-item-selected .anticon {
+  color: var(--r-text-white) !important;
+}
+
+/* Modal */
+.ant-modal-content {
+  background: var(--r-bg-surface) !important;
+  border: 1px solid var(--r-border-dark) !important;
+  border-radius: var(--r-radius-xl) !important;
+  box-shadow: none !important;
+}
+.ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--r-border-dark) !important;
+}
+
+/* Segmented */
+.ant-segmented {
+  background: transparent !important;
+  border: 1px solid var(--r-border-dark) !important;
+  border-radius: var(--r-radius-sm) !important;
+}
+.ant-segmented-item-selected {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Alert */
+.ant-alert {
+  border-radius: var(--r-radius-md) !important;
+  border: 1px solid var(--r-border-dark) !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 /* Smooth transitions */
-* {
-  transition: background-color 0.2s, border-color 0.2s;
-}
+* { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
