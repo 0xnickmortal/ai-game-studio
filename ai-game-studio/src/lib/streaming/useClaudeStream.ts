@@ -12,7 +12,7 @@ let _messages: ChatMsg[] = [];
 let _isStreaming = false;
 let _sessionId = '';
 let _internalId = '';
-let _listeners = new Set<() => void>();
+const _listeners = new Set<() => void>();
 
 // Restore from localStorage — deferred to first hook mount (avoids SSR hydration mismatch)
 let _restored = false;
