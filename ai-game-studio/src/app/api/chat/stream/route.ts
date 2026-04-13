@@ -4,10 +4,11 @@
 // _sendMessageToClaude + stdout parsing + _processJsonStreamData
 // ============================================
 
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { spawn, ChildProcess } from 'child_process';
 import { randomUUID } from 'crypto';
 import { registerProcess, removeProcess } from '@/lib/claude/process-registry';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,16 @@ const SAFE_TOOLS = new Set([
 ]);
 
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || request.headers.get('x-real-ip') || 'unknown';
+  const limit = checkRateLimit(ip);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: `Rate limit exceeded. Try again in ${Math.ceil(limit.resetIn / 60000)} minutes.` },
+      { status: 429 }
+    );
+  }
+
   const body = await request.json();
   const { message, sessionId: existingSessionId, model } = body as {
     message: string;
