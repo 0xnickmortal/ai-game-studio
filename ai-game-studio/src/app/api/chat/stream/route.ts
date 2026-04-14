@@ -9,6 +9,7 @@ import { spawn, ChildProcess } from 'child_process';
 import { randomUUID } from 'crypto';
 import { registerProcess, removeProcess } from '@/lib/claude/process-registry';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { validateInvite, isInviteRequired } from '@/lib/invite';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,9 +22,19 @@ const SAFE_TOOLS = new Set([
 ]);
 
 export async function POST(request: NextRequest) {
-  // Rate limiting
+  // Invite validation
+  const inviteToken = request.cookies.get('invite_token')?.value
+    || request.headers.get('x-invite-token')
+    || null;
+  const invite = validateInvite(inviteToken);
+  if (isInviteRequired() && !invite) {
+    return NextResponse.json({ error: 'Invalid or missing invite token' }, { status: 401 });
+  }
+
+  // Rate limiting — keyed by invite label (or IP if no invite)
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || request.headers.get('x-real-ip') || 'unknown';
-  const limit = checkRateLimit(ip);
+  const rateKey = invite?.label || ip;
+  const limit = checkRateLimit(rateKey);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: `Rate limit exceeded. Try again in ${Math.ceil(limit.resetIn / 60000)} minutes.` },
