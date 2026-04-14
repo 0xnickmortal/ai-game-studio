@@ -1,31 +1,55 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-// All app routes (anything that's not / or static)
-// require a valid invite cookie when INVITE_TOKENS is set
-const PUBLIC_PATHS = ['/']; // landing page only
+const COOKIE_NAME = 'invite_token';
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // If invite gating is OFF, allow everything
-  const inviteRequired = !!process.env.INVITE_TOKENS?.trim();
-  if (!inviteRequired) return NextResponse.next();
-
-  // Allow landing page itself
-  if (PUBLIC_PATHS.includes(pathname)) return NextResponse.next();
-
-  // Allow health checks (Railway uses this)
-  if (pathname === '/api/health') return NextResponse.next();
-
-  // Check invite cookie
-  const token = request.cookies.get('invite_token')?.value;
-  const validTokens = (process.env.INVITE_TOKENS || '')
+function getValidTokens(): string[] {
+  return (process.env.INVITE_TOKENS || '')
     .split(',')
     .map((s) => s.trim().split(':')[0])
     .filter(Boolean);
+}
 
+export function middleware(request: NextRequest) {
+  const { pathname, searchParams } = request.nextUrl;
+
+  const inviteRequired = !!process.env.INVITE_TOKENS?.trim();
+  if (!inviteRequired) return NextResponse.next();
+
+  const validTokens = getValidTokens();
+
+  // Handle ?code=xxx on landing page — validate, set cookie, redirect
+  if (pathname === '/') {
+    const code = searchParams.get('code');
+    if (code) {
+      if (validTokens.includes(code)) {
+        // Valid — set cookie and redirect to /generate
+        const response = NextResponse.redirect(new URL('/generate', request.url));
+        response.cookies.set(COOKIE_NAME, code, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'lax',
+          maxAge: COOKIE_MAX_AGE,
+          path: '/',
+        });
+        return response;
+      } else {
+        // Invalid — strip the code from URL so user sees landing with error
+        const url = new URL('/', request.url);
+        url.searchParams.set('error', 'invalid');
+        return NextResponse.redirect(url);
+      }
+    }
+    // No code — let landing page render
+    return NextResponse.next();
+  }
+
+  // Allow Railway health checks
+  if (pathname === '/api/health') return NextResponse.next();
+
+  // All other routes require valid cookie
+  const token = request.cookies.get(COOKIE_NAME)?.value;
   if (!token || !validTokens.includes(token)) {
-    // Redirect to landing — even API routes return 401-ish redirect
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { error: 'Invalid or missing invite token' },
@@ -39,7 +63,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Match all routes except Next.js internals and static assets
   matcher: [
     '/((?!_next/static|_next/image|_next/data|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|css|js)).*)',
   ],
