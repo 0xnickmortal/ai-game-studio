@@ -33,12 +33,20 @@ const menuItems = [
   { key: '/settings',   icon: <SettingOutlined />,       label: '设置' },
 ];
 
+// Routes that should NOT use the app shell (sidebar + header)
+const STANDALONE_ROUTES = ['/'];
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const agentCount = getAgentStats().total;
   const activeKey = menuItems.find((item) => pathname.startsWith(item.key))?.key || '/dashboard';
+
+  // Render children directly for landing/standalone pages
+  if (STANDALONE_ROUTES.includes(pathname)) {
+    return <>{children}</>;
+  }
 
   return (
     <Layout style={{ minHeight: '100vh', background: '#000' }}>
