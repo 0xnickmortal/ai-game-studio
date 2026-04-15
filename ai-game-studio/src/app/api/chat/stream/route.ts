@@ -7,9 +7,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { spawn, ChildProcess } from 'child_process';
 import { randomUUID } from 'crypto';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { registerProcess, removeProcess } from '@/lib/claude/process-registry';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { validateInvite, isInviteRequired } from '@/lib/invite';
+
+/** Detect which auth path the Claude CLI will use. Purely informational. */
+function detectAuthSource(env: Record<string, string>): string {
+  if (env.ANTHROPIC_API_KEY) {
+    const masked = env.ANTHROPIC_API_KEY.slice(0, 8) + '…' + env.ANTHROPIC_API_KEY.slice(-4);
+    return `ANTHROPIC_API_KEY (env) ${masked}`;
+  }
+  const home = env.HOME || env.USERPROFILE;
+  if (home) {
+    const credsPath = join(home, '.claude', '.credentials.json');
+    if (existsSync(credsPath)) return `OAuth ${credsPath}`;
+  }
+  return 'NONE — CLI will fail (no ANTHROPIC_API_KEY, no ~/.claude/.credentials.json)';
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -58,10 +74,14 @@ export async function POST(request: NextRequest) {
     if (v !== undefined) env[k] = v;
   }
   // Keep ANTHROPIC_API_KEY if set (fallback when OAuth fails on server deployment)
-  // Otherwise CLI uses OAuth from ~/.claude/.credentials.json
+  // Otherwise CLI uses OAuth from ~/.claude/.credentials.json (local dev)
   if (!env.HOME && env.USERPROFILE) env.HOME = env.USERPROFILE;
   env.FORCE_COLOR = '0';
   env.NO_COLOR = '1';
+
+  // ── Log which auth source is active (helps debug 401 on deploys) ──
+  const authSource = detectAuthSource(env);
+  console.log(`[Stream] ${internalId.slice(0, 8)} auth: ${authSource}`);
 
   // ── Build args (exact copy from extension.ts _sendMessageToClaude) ──
   const args: string[] = [

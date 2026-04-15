@@ -8,11 +8,23 @@ import { ChatMsg } from '@/types/chat';
 
 // ── Module-level state (survives navigation) ──
 const STORAGE_KEY = 'claude-chat';
+const USAGE_KEY = 'claude-chat-usage';
 let _messages: ChatMsg[] = [];
 let _isStreaming = false;
 let _sessionId = '';
 let _internalId = '';
 const _listeners = new Set<() => void>();
+
+// Agent usage tracking
+export interface AgentCall { name: string; ts: number; }
+export interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+  cacheCreationTokens: number;
+  cacheReadTokens: number;
+}
+let _agentCalls: AgentCall[] = [];
+let _tokens: TokenUsage = { inputTokens: 0, outputTokens: 0, cacheCreationTokens: 0, cacheReadTokens: 0 };
 
 // Restore from localStorage — deferred to first hook mount (avoids SSR hydration mismatch)
 let _restored = false;
@@ -28,6 +40,7 @@ function push(msg: ChatMsg) {
 function persist() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages: _messages, sessionId: _sessionId }));
+    localStorage.setItem(USAGE_KEY, JSON.stringify({ agentCalls: _agentCalls, tokens: _tokens }));
   } catch { /* full */ }
 }
 
@@ -36,7 +49,12 @@ export function resetStream() {
   _isStreaming = false;
   _sessionId = '';
   _internalId = '';
-  try { localStorage.removeItem(STORAGE_KEY); } catch { /* ok */ }
+  _agentCalls = [];
+  _tokens = { inputTokens: 0, outputTokens: 0, cacheCreationTokens: 0, cacheReadTokens: 0 };
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(USAGE_KEY);
+  } catch { /* ok */ }
   notify();
 }
 
@@ -53,6 +71,12 @@ export function useClaudeStream() {
           const data = JSON.parse(saved);
           _messages = data.messages || [];
           _sessionId = data.sessionId || '';
+        }
+        const usage = localStorage.getItem(USAGE_KEY);
+        if (usage) {
+          const u = JSON.parse(usage);
+          _agentCalls = u.agentCalls || [];
+          _tokens = u.tokens || _tokens;
         }
       } catch { /* ignore */ }
     }
@@ -150,6 +174,8 @@ export function useClaudeStream() {
     messages: _messages,
     isStreaming: _isStreaming,
     sessionId: _sessionId,
+    agentCalls: _agentCalls,
+    tokens: _tokens,
     startSession,
     sendMessage,
     respondPermission,
@@ -222,6 +248,22 @@ function handleEvent(type: string, data: any) {
         rawInput: data.rawInput || {},
         ts,
       });
+      // Track subagent spawns — Task tool with subagent_type
+      if (data.toolName === 'Task' && data.rawInput?.subagent_type) {
+        _agentCalls = [..._agentCalls, { name: String(data.rawInput.subagent_type), ts }];
+        persist();
+      }
+      break;
+
+    case 'updateTokens':
+      _tokens = {
+        inputTokens:          _tokens.inputTokens          + (data.inputTokens || 0),
+        outputTokens:         _tokens.outputTokens         + (data.outputTokens || 0),
+        cacheCreationTokens:  _tokens.cacheCreationTokens  + (data.cacheCreationTokens || 0),
+        cacheReadTokens:      _tokens.cacheReadTokens      + (data.cacheReadTokens || 0),
+      };
+      persist();
+      notify();
       break;
 
     case 'toolResult': {

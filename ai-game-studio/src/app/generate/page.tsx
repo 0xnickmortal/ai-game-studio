@@ -9,6 +9,8 @@ import {
 } from '@ant-design/icons';
 import ClaudeChat from '@/components/chat/ClaudeChat';
 import GamePreview from '@/components/preview/GamePreview';
+import AgentUsagePanel from '@/components/chat/AgentUsagePanel';
+import { useClaudeStream } from '@/lib/streaming/useClaudeStream';
 
 const { Text } = Typography;
 
@@ -31,6 +33,9 @@ export default function GeneratePage() {
   const [previewUrl, setPreviewUrl] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [godotFiles, setGodotFiles] = useState<string[]>([]);
+
+  // Agent usage tracking (module-level singleton — same state as inside ClaudeChat)
+  const { agentCalls, tokens, reset: resetChat } = useClaudeStream();
 
   // Poll for Godot project files — stops polling if endpoint is unavailable
   useEffect(() => {
@@ -212,6 +217,9 @@ export default function GeneratePage() {
           />
         </Card>
       </div>
+
+      {/* Floating agent usage panel */}
+      <AgentUsagePanel agentCalls={agentCalls} tokens={tokens} onReset={resetChat} />
     </div>
   );
 }
