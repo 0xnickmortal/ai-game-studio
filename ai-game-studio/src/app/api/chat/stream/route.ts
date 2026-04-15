@@ -57,7 +57,8 @@ export async function POST(request: NextRequest) {
   for (const [k, v] of Object.entries(process.env)) {
     if (v !== undefined) env[k] = v;
   }
-  delete env.ANTHROPIC_API_KEY;
+  // Keep ANTHROPIC_API_KEY if set (fallback when OAuth fails on server deployment)
+  // Otherwise CLI uses OAuth from ~/.claude/.credentials.json
   if (!env.HOME && env.USERPROFILE) env.HOME = env.USERPROFILE;
   env.FORCE_COLOR = '0';
   env.NO_COLOR = '1';
@@ -161,6 +162,9 @@ export async function POST(request: NextRequest) {
       // ── Process lifecycle ──
       child.on('close', (code) => {
         console.log(`[Stream] ${internalId.slice(0, 8)} exited code=${code}`);
+        if (stderr) {
+          console.error(`[Stream] ${internalId.slice(0, 8)} stderr:`, stderr);
+        }
         if (code !== 0 && stderr) {
           send('error', stderr.trim());
         }

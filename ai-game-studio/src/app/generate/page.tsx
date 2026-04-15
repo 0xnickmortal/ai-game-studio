@@ -32,11 +32,17 @@ export default function GeneratePage() {
   const [showPreview, setShowPreview] = useState(false);
   const [godotFiles, setGodotFiles] = useState<string[]>([]);
 
-  // Poll for Godot project files
+  // Poll for Godot project files — stops polling if endpoint is unavailable
   useEffect(() => {
+    let stopped = false;
     const check = async () => {
+      if (stopped) return;
       try {
         const res = await fetch('/api/build/detect');
+        if (res.status === 404 || res.status === 401) {
+          stopped = true; // endpoint missing or gated — don't keep polling
+          return;
+        }
         if (res.ok) {
           const data = await res.json();
           if (data.found && data.files?.length > 0) {
@@ -44,11 +50,11 @@ export default function GeneratePage() {
             if (buildState === 'idle') setBuildState('ready');
           }
         }
-      } catch { /* ignore */ }
+      } catch { stopped = true; }
     };
     check();
-    const interval = setInterval(check, 15000); // Check every 15s
-    return () => clearInterval(interval);
+    const interval = setInterval(() => { if (!stopped) check(); }, 15000);
+    return () => { stopped = true; clearInterval(interval); };
   }, [buildState]);
 
   const handleBuild = useCallback(async () => {
